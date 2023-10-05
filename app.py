@@ -11,27 +11,44 @@ def fetch_live_data():
         'Timestamp': [pd.Timestamp.now(), pd.Timestamp.now() - pd.Timedelta(minutes=5)],
         'House_ID': [1, 2],
         'Location': ['Downtown', 'Suburb'],
-        'Square_Feet': [2000, 2500],
-        'Bedrooms': [3, 4],
-        'Bathrooms': [2, 3]
+        'Square_Feet': [2000, 2000],
+        'Bedrooms': [3, 3],
+        'Bathrooms': [2, 2],
+        'Garage': [2, 2],            # Number of garage spaces
+        'Year_Built': [2023, 2023],  # Year the house was built
+        'Fireplace': ['Yes', 'No'],  # Whether the house has a fireplace
+        'Pool': ['Yes', 'No'],       # Whether the house has a pool
+        'School_Rating': [9, 9],     # Rating of the nearest school (1-10)
+        'Crime_Rate': [3.5, 3.5],    # Crime rate in the neighborhood (per 1000 residents)
+        'Market_Distance': [1.5, 1.5]  # Distance to the nearest market (miles)
     }
+    
+    # Calculate the predicted prices and add them to the data
+    predicted_prices = [predict_house_price(location, area, bedrooms, bathrooms, garage, year_built, fireplace, pool, school_rating, crime_rate, market_distance) for location, area, bedrooms, bathrooms, garage, year_built, fireplace, pool, school_rating, crime_rate, market_distance in zip(data['Location'], data['Square_Feet'], data['Bedrooms'], data['Bathrooms'], data['Garage'], data['Year_Built'], data['Fireplace'], data['Pool'], data['School_Rating'], data['Crime_Rate'], data['Market_Distance'])]
+    data['Predicted_Price'] = predicted_prices
+    
     return pd.DataFrame(data)
 
 # Simulated live house price prediction function (replace with your actual model)
-def predict_house_price(location, area, bedrooms, bathrooms):
-    # Simulated linear regression model (replace with your trained model)
+def predict_house_price(location, area, bedrooms, bathrooms, garage, year_built, fireplace, pool, school_rating, crime_rate, market_distance):
+    # Replace with your trained model and appropriate coefficients
     # In practice, you should load your trained model and use it for predictions.
     
-    # Encode the location feature using one-hot encoding
-    location_encoded = 1 if location == 'Downtown' else 0
+    # Example coefficients (replace with your actual coefficients)
+    coefficients = [100, 50, 75, 25, 20, -10, 15, 10, 5, 15]  # Adjust to match the number of features
+
+    # Encode categorical features like 'Fireplace' and 'Pool'
+    fireplace_encoded = 1 if fireplace == 'Yes' else 0
+    pool_encoded = 1 if pool == 'Yes' else 0
     
     # Ensure that coefficients and features are of numeric data types
-    coefficients = [100, 50, 75, 25]  # Adjust to match the number of features
     coefficients = [float(c) for c in coefficients]  # Convert to float if needed
     
-    features = [area, bedrooms, bathrooms, location_encoded]  # Include location as a feature
+    # Construct the feature vector
+    features = [area, bedrooms, bathrooms, garage, year_built, school_rating, crime_rate, market_distance, fireplace_encoded, pool_encoded]
     features = [float(f) for f in features]  # Convert to float if needed
     
+    # Perform the prediction
     predicted_price = np.dot(features, coefficients)
     return predicted_price
 
@@ -43,24 +60,40 @@ st.set_page_config(
 )
 
 # Main content
-st.markdown("<h1 style='text-align: center;'>REAL ESTATE PREDICTION</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center;'>HOUSE PRICE PREDICTION🏠</h1>", unsafe_allow_html=True)
 
 # Create a centered section using Markdown
-st.markdown("<h1 style='text-align: center;'>House Features</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center;'>House Features🏠</h1>", unsafe_allow_html=True)
 
 # Input elements for user input in the center of the app
 location = st.selectbox("Location", ["Downtown", "Suburb"])
 area = st.number_input("Area (Square Feet)", min_value=0, value=2000)
 bedrooms = st.number_input("Bedrooms", min_value=0, value=3)
 bathrooms = st.number_input("Bathrooms", min_value=0, value=2)
+garage = st.number_input("Garage Spaces", min_value=0, value=1)
+year_built = st.number_input("Year Built", min_value=1800, value=2000)
+fireplace = st.radio("Fireplace", ["Yes", "No"])
+pool = st.radio("Pool", ["Yes", "No"])
+school_rating = st.slider("School Rating (1-10)", min_value=1, max_value=10, value=8)
+crime_rate = st.number_input("Crime Rate (per 1000 residents)", min_value=0.0, value=3.0)
+market_distance = st.number_input("Distance to Nearest Market (miles)", min_value=0.0, value=1.0)
 
 # Add a "Predict" button
 if st.button("Predict"):
-    # Perform live house price prediction when the button is clicked
-    predicted_price = predict_house_price(location, area, bedrooms, bathrooms)
+    # Use st.spinner to indicate that the prediction is being processed
+    with st.spinner("Predicting..."):
+        try:
+            # Perform live house price prediction when the button is clicked
+            predicted_price = predict_house_price(location, area, bedrooms, bathrooms, garage, year_built, fireplace, pool, school_rating, crime_rate, market_distance)
     
-    # Display predicted prices
-    st.markdown(f"<h2 style='text-align: center;color:red;'>Predicted Price: ${predicted_price:,.2f}</h2>", unsafe_allow_html=True)
+            # Display predicted prices
+            st.markdown(f"<h2 style='text-align: center;color:red;'>Predicted Price: ${predicted_price:,.2f}</h2>", unsafe_allow_html=True)
+        except Exception as e:
+            st.error(f"An error occurred: {str(e)}")
 
-# Add a delay for updates
-time.sleep(1)  # Replace this with your update logic
+# Remove the time.sleep(1) line; it's not needed
+
+# Display the simulated live data in the sidebar as a vertical table
+st.sidebar.markdown("<h1 style='text-align: center;'>Simulated Live Data</h1>", unsafe_allow_html=True)
+live_data = fetch_live_data()
+st.sidebar.table(live_data)
