@@ -18,7 +18,7 @@ def fetch_live_data():
         'Year_Built': [2023, 2023],  # Year the house was built
         'Fireplace': ['Yes', 'No'],  # Whether the house has a fireplace
         'Pool': ['Yes', 'No'],       # Whether the house has a pool
-        'School_nearby': [9, 9],     # Rating of the nearest school (1-10)
+        'School_rating': [9, 9],     # Rating of the nearest school (1-10)
         'Crime_Rate': [3.5, 3.5],    # Crime rate in the neighborhood (per 1000 residents)
         'Market_Distance': [1.5, 1.5]  # Distance to the nearest market (miles)
     }
@@ -74,7 +74,7 @@ garage = st.number_input("Garage Spaces", min_value=0, value=1)
 year_built = st.number_input("Year Built", min_value=1800, value=2000)
 fireplace = st.radio("Fireplace", ["Yes", "No"])
 pool = st.radio("Pool", ["Yes", "No"])
-school_rating = st.slider("School Rating (1-10)", min_value=1, max_value=10, value=8)
+school_rating = st.slider("School Nearby (1-10)", min_value=1, max_value=10, value=8)
 crime_rate = st.number_input("Crime Rate (per 1000 residents)", min_value=0.0, value=3.0)
 market_distance = st.number_input("Distance to Nearest Market (miles)", min_value=0.0, value=1.0)
 
