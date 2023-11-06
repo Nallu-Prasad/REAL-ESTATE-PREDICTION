@@ -18,7 +18,7 @@ def fetch_live_data():
         'Year_Built': [2023, 2023],  # Year the house was built
         'Fireplace': ['Yes', 'No'],  # Whether the house has a fireplace
         'Pool': ['Yes', 'No'],       # Whether the house has a pool
-        'School_rating': [9, 9],     # Rating of the nearest school (1-10)
+        'School_Rating': [9, 9],     # Rating of the nearest school (1-10)
         'Crime_Rate': [3.5, 3.5],    # Crime rate in the neighborhood (per 1000 residents)
         'Market_Distance': [1.5, 1.5]  # Distance to the nearest market (miles)
     }
